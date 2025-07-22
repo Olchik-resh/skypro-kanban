@@ -1,3 +1,7 @@
+ <script setup lang="ts">
+import TaskColumn from '.vue'
+</script>
+
 <template>
   <main class="main">
     <div class="container">
@@ -9,9 +13,3 @@
     </div>
   </main>
 </template>
-
-<script setup>
-import TaskColumn from './TaskColumn.vue'
-</script>
-
-<style lang="scss" scoped></style>
