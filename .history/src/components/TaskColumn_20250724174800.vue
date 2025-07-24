@@ -1,7 +1,7 @@
 <template>
   <div class="main__column column">
     <div class="column__title">
-      <p>{{ columnTitle }}</p>
+      <p class="title-inline">{{ columnTitle }}</p>
     </div>
     <TaskCard />
   </div>

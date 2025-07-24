@@ -2,6 +2,7 @@
   <div class="main__column column">
     <div class="column__title">
       <p>{{ columnTitle }}</p>
+      <p>{{ columnTitle }}</p>
     </div>
     <TaskCard />
   </div>

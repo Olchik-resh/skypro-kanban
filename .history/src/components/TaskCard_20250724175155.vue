@@ -56,7 +56,6 @@
 </template>
 
 <script setup>
-const CardTitle = 'Copywriting'
 </script>
 
 <style lang="scss" scoped></style>

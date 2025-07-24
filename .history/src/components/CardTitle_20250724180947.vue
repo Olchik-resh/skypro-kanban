@@ -1,0 +1,12 @@
+ <!-- <template>
+  <div>
+    <CardTitle title="Web Design" />
+    <CardTitle title="Copywriting" />
+    
+    <CardTitle title="Copywriting" />
+  </div>
+</template>
+
+<script setup>
+import CardTitle from './TaskCard.vue'
+</script> -->

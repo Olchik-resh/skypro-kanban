@@ -1100,3 +1100,8 @@ body {
     display: block;
   }
 }
+
+.title-inline {
+  display: inline;
+  
+}

@@ -9,7 +9,7 @@
 
 <script setup>
 import TaskCard from './TaskCard.vue'
-const columnTitle = 'Без статуса'
+
 </script>
 
 <style lang="scss" scoped></style>

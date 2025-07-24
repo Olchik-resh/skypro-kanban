@@ -1,7 +1,7 @@
 <template>
   <div class="main__column column">
     <div class="column__title">
-      <p>{{ columnTitle }}</p>
+      <TaskColumn v-for="(title, index) in columnTitl" :key="index" :columnTitle="title" />
     </div>
     <TaskCard />
   </div>

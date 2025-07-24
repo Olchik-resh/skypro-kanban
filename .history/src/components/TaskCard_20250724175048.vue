@@ -4,7 +4,7 @@
       <div class="cards__card card">
         <div class="card__group">
           <div class="card__theme _orange">
-            <p class="_orange">{{ CardTitle }}</p>
+            <p class="_orange">Web Design</p>
           </div>
           <a href="#popBrowse" target="_self">
             <div class="card__btn">
@@ -55,8 +55,6 @@
   </div>
 </template>
 
-<script setup>
-const CardTitle = 'Copywriting'
-</script>
+<script setup></script>
 
 <style lang="scss" scoped></style>

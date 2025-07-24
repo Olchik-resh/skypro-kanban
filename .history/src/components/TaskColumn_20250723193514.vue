@@ -3,13 +3,12 @@
     <div class="column__title">
       <p>{{ columnTitle }}</p>
     </div>
-    <TaskCard />
+    <TaskCard :title="columnTitle" />
   </div>
 </template>
 
 <script setup>
 import TaskCard from './TaskCard.vue'
-const columnTitle = 'Без статуса'
-</script>
 
-<style lang="scss" scoped></style>
+const columnTitle = 'Название колонки'
+</script>

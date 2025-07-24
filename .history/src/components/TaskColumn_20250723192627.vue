@@ -1,7 +1,11 @@
 <template>
   <div class="main__column column">
     <div class="column__title">
-      <p>{{ columnTitle }}</p>
+      <p></p>
+    </div>
+    <TaskCard />
+  </div>
+  
     </div>
     <TaskCard />
   </div>
@@ -9,7 +13,6 @@
 
 <script setup>
 import TaskCard from './TaskCard.vue'
-const columnTitle = 'Без статуса'
 </script>
 
 <style lang="scss" scoped></style>
