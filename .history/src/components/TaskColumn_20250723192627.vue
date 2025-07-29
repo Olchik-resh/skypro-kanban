@@ -1,0 +1,18 @@
+<template>
+  <div class="main__column column">
+    <div class="column__title">
+      <p></p>
+    </div>
+    <TaskCard />
+  </div>
+  
+    </div>
+    <TaskCard />
+  </div>
+</template>
+
+<script setup>
+import TaskCard from './TaskCard.vue'
+</script>
+
+<style lang="scss" scoped></style>
