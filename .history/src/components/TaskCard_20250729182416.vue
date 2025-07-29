@@ -65,8 +65,8 @@ onMounted(() => {
 defineProps({
   topic: { type: String, required: true },
   title: { type: String, required: true },
-  date: { type: String, required: true },
-  status: { type: String, required: true },
+  date: { type: String, require: true },
+  status: { type: String, require: true },
 })
 </script>
 

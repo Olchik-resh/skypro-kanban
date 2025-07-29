@@ -63,10 +63,10 @@ onMounted(() => {
   tasks.value = getTasks()
 })
 defineProps({
-  topic: { type: String, required: true },
-  title: { type: String, required: true },
-  date: { type: String, required: true },
-  status: { type: String, required: true },
+  topic: String,
+  title: String,
+  date: String,
+  status: S,
 })
 </script>
 
