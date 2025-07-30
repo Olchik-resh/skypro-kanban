@@ -2,12 +2,14 @@
   <main class="main">
     <div class="container">
       <div class="main__block">
+        <!-- <p v-if="!tasks.length">Задач нет</p> -->
         <div class="main__content">
           <TaskColumn :tasks="noStatusTask" title="Без статуса" />
           <TaskColumn :tasks="doStatusTask" title="Нужно сделать" />
           <TaskColumn :tasks="workStatusTask" title="В работе" />
           <TaskColumn :tasks="testStatusTask" title="Тестирование" />
           <TaskColumn :tasks="readyStatusTask" title="Готово" />
+          <div id="message">Задач нет</div>
         </div>
       </div>
     </div>
@@ -57,15 +59,5 @@ const readyStatusTask = computed(() => {
 .main__content {
   width: 100%;
   display: flex;
-}
-#message {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
 }
 </style>

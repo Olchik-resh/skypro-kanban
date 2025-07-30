@@ -691,4 +691,6 @@ body {
   }
 }
 
-
+.loader {
+  text-align: center;
+}

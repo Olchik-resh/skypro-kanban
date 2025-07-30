@@ -691,4 +691,7 @@ body {
   }
 }
 
-
+.loader {
+  text-align: center;
+  background-color: #eaeef6;
+}

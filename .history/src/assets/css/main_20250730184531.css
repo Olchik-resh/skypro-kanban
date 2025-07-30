@@ -691,4 +691,9 @@ body {
   }
 }
 
-
+.loader {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
+  color: #94a6be;
+}

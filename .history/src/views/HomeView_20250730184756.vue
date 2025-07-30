@@ -29,7 +29,7 @@
 
       <!-- Отображение лоадера -->
       <div class="loader" v-if="loading">
-        Данные загружаются<span class="dots">.</span><span class="dots">.</span
+        Данные загружаются... <span class="dots">.</span><span class="dots">.</span
         ><span class="dots">.</span>
       </div>
     </div>

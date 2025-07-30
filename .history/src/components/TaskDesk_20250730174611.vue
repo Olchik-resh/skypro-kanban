@@ -2,12 +2,14 @@
   <main class="main">
     <div class="container">
       <div class="main__block">
+        
         <div class="main__content">
           <TaskColumn :tasks="noStatusTask" title="Без статуса" />
           <TaskColumn :tasks="doStatusTask" title="Нужно сделать" />
           <TaskColumn :tasks="workStatusTask" title="В работе" />
           <TaskColumn :tasks="testStatusTask" title="Тестирование" />
           <TaskColumn :tasks="readyStatusTask" title="Готово" />
+          <div id="message">Задач нет</div>
         </div>
       </div>
     </div>
