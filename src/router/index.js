@@ -25,10 +25,6 @@ const router = createRouter({
           path: '/browse-card/:id',
           component: () => import('@/views/TaskView.vue'),
         },
-        {
-          path: '/:pathMatch(.*)*',
-          component: NotFoundView,
-        },
       ],
       meta: {
         requiresAuth: true,
