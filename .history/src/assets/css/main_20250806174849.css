@@ -111,6 +111,7 @@ body {
 
 ._active-category {
   opacity: 1 !important;
+  padding: 8px 20px 8px 20px;
 }
 .pop-wrap {
   position: relative;

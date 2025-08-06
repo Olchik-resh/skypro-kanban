@@ -1,4 +1,5 @@
 <template>
+<<<<<<< Updated upstream
   <div>
     <div class="wrapper">
       <div class="container-signup">
@@ -228,3 +229,13 @@ a {
   }
 }
 </style>
+
+  <AuthForm :isSignUp="true" />
+</template>
+
+<script setup>
+import AuthForm from './AuthForm.vue'
+</script>
+
+<style lang="scss" scoped></style>
+>>>>>>> Stashed changes

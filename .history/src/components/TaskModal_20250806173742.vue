@@ -225,7 +225,6 @@ const task = computed(() => {
 }
 .pop-browse__content .theme-top {
   display: block;
-  padding: 8px 20px 8px 20px;
 }
 .pop-browse__top-block {
   display: flex;
@@ -267,7 +266,7 @@ const task = computed(() => {
 .pop-browse__btn-edit .btn-group button {
   margin-right: 8px;
 }
-.btn-edit__close {
+.btn-edit__close _btn-bg {
   width: 86px;
 }
 </style>
