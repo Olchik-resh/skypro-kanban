@@ -46,19 +46,4 @@ export async function editTask({ token, id, task }) {
   }
 }
 
-export async function deleteTask({ token, id }) {
-  try {
-    // Пытаемся получить карточку по ее id на сервере
-    const data = await axios.delete(API_URL + id, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': '',
-      },
-    })
-    // Возвращаем обновленный список задач
-    return data.data.tasks
-  } catch (error) {
-    // Пробрасываем ошибку, чтобы обработать ее в вызывающем коде
-    throw new Error(error.message)
-  }
-}
+

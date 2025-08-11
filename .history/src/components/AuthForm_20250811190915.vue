@@ -89,13 +89,13 @@ const props = defineProps({
 
 const formData = ref({
   name: '',
-  login: '',
+  email: '',
   password: '',
 })
 
 const errors = ref({
   name: false,
-  login: false,
+  email: false,
   password: false,
 })
 
@@ -147,7 +147,7 @@ async function handleSubmit(event) {
 
     const data = props.isSignUp
       ? await signUp(formData.value)
-      : await signIn({ login: formData.value.login, password: formData.value.password })
+      : await signIn({ login: formData.value.email, password: formData.value.password })
 
     console.log('Полученный ответ:', data)
 

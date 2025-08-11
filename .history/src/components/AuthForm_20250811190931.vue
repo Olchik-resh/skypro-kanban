@@ -89,13 +89,13 @@ const props = defineProps({
 
 const formData = ref({
   name: '',
-  login: '',
+  email: '',
   password: '',
 })
 
 const errors = ref({
   name: false,
-  login: false,
+  email: false,
   password: false,
 })
 

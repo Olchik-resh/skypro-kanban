@@ -89,7 +89,7 @@ const props = defineProps({
 
 const formData = ref({
   name: '',
-  login: '',
+  email: '',
   password: '',
 })
 

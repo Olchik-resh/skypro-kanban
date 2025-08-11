@@ -27,9 +27,9 @@
                 name="login"
                 id="formlogin"
                 placeholder="Эл. почта"
-                v-model="formData.login"
-                @focus="clearError('login')"
-                autocomplete="login"
+                v-model="formData.email"
+                @focus="clearError('email')"
+                autocomplete="email"
                 spellcheck="false"
               />
               <!-- Поле пароля -->
@@ -89,13 +89,13 @@ const props = defineProps({
 
 const formData = ref({
   name: '',
-  login: '',
+  email: '',
   password: '',
 })
 
 const errors = ref({
   name: false,
-  login: false,
+  email: false,
   password: false,
 })
 
@@ -121,9 +121,9 @@ function validateForm() {
     isValid = false
   }
 
-  formData.value.login = formData.value.login || ''
-  if (!formData.value.login.trim()) {
-    errors.value.login = true
+  formData.value.email = formData.value.email || ''
+  if (!formData.value.email.trim()) {
+    errors.value.email = true
     isValid = false
   }
 
@@ -147,7 +147,7 @@ async function handleSubmit(event) {
 
     const data = props.isSignUp
       ? await signUp(formData.value)
-      : await signIn({ login: formData.value.login, password: formData.value.password })
+      : await signIn({ login: formData.value.email, password: formData.value.password })
 
     console.log('Полученный ответ:', data)
 

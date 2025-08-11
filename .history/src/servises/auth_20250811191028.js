@@ -22,7 +22,7 @@ export async function signUp({ name, login, password }) {
 
 export async function signIn(userData) {
   try {
-    const data = await axios.post(API_URL + '/login', userData, {
+    const data = await axios.post(API_URL + '/email', userData, {
       headers: {
         'Content-Type': '',
       },

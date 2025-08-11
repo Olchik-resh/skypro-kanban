@@ -2,11 +2,11 @@ import axios from 'axios'
 
 const API_URL = 'https://wedev-api.sky.pro/api/user'
 
-export async function signUp({ name, login, password }) {
+export async function signUp({ name, , password }) {
   try {
     const data = await axios.post(
       API_URL,
-      { name, login, password },
+      { name, email, password },
       {
         headers: {
           'Content-Type': '',
@@ -22,7 +22,7 @@ export async function signUp({ name, login, password }) {
 
 export async function signIn(userData) {
   try {
-    const data = await axios.post(API_URL + '/login', userData, {
+    const data = await axios.post(API_URL + '/email', userData, {
       headers: {
         'Content-Type': '',
       },
