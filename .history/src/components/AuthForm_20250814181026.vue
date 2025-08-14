@@ -284,7 +284,7 @@ a {
   justify-content: center;
 }
 .modal__form-login input:first-child {
-  margin-bottom: 7px;
+ 
 }
 .modal__input {
   width: 100%;
@@ -351,10 +351,11 @@ a {
   text-decoration: underline;
 }
 .error {
-  border: 0.7px solid red;
-  padding: 0;
-  margin: 0;
+  border: 1px solid red;
+  width: 100%;
+  min-width: 100%;
   border-radius: 8px;
+  margin-bottom: 7px;
 }
 
 .error-text {

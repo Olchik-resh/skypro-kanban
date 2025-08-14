@@ -139,8 +139,7 @@ function validateForm() {
 
   // Если есть ошибки, устанавливаем сообщение
   if (!isValid) {
-    error.value =
-      'Введенные вами данные не корректны. Чтобы завершить регистрацию, заполните все поля в форме.'
+    error.value = ''
   }
 
   return isValid
@@ -351,18 +350,15 @@ a {
   text-decoration: underline;
 }
 .error {
-  border: 0.7px solid red;
-  padding: 0;
-  margin: 0;
+  border: 1px solid red;
+  width: 100%;
+  min-width: 100%;
   border-radius: 8px;
 }
 
 .error-text {
   color: red;
   margin-top: 5px;
-  text-align: center;
-  font-size: 12px;
-  margin-bottom: 7px;
 }
 
 .BaseInput {

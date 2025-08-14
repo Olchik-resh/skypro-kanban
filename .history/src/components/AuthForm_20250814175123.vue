@@ -44,9 +44,8 @@
                 autocomplete="current-password"
                 spellcheck="false"
               />
-              <p v-show="error" class="error-text">
-                {{ error }}
-              </p>
+              <div class="error-message" v-if="errorMessage.value">{{ errorMessage.value }}</div>
+
               <!-- Кнопка отправки -->
               <BaseButton
                 type="secondary"
@@ -85,10 +84,25 @@ import { signIn, signUp } from '@/servises/auth'
 const auth = inject('auth') // Извлекаем весь объект auth
 const userInfo = auth?.user // Добавляем проверку на существование
 
+// Добавляем watch с проверкой на существование
+if (userInfo) {
+  watch(
+    userInfo,
+    (newVal) => {
+      console.log('Пользователь изменился:', newVal)
+    },
+    { immediate: true },
+  )
+}
+
 const router = useRouter()
 
 const props = defineProps({
   isSignUp: Boolean,
+  error: {
+    type: String,
+    default: '',
+  },
 })
 
 const formData = ref({
@@ -103,7 +117,13 @@ const errors = ref({
   password: false,
 })
 
-const error = ref('')
+const errorMessage = ref('')
+
+// Функция для сброса ошибки
+function clearError(fieldName) {
+  console.log('clearError called for', fieldName)
+  errors.value[fieldName] = false
+}
 
 // Вычисляемое свойство для проверки валидности формы
 const isFormInvalid = computed(() => {
@@ -112,12 +132,12 @@ const isFormInvalid = computed(() => {
 
 function validateForm() {
   let isValid = true
-  error.value = ''
 
   // Сброс ошибок
   errors.value.name = false
   errors.value.login = false
   errors.value.password = false
+  errorMessage.value = '' // Сброс сообщения об ошибке
 
   // Проверка имени (только для регистрации)
   if (props.isSignUp && !formData.value.name.trim()) {
@@ -136,11 +156,11 @@ function validateForm() {
     errors.value.password = true
     isValid = false
   }
-
-  // Если есть ошибки, устанавливаем сообщение
   if (!isValid) {
-    error.value =
-      'Введенные вами данные не корректны. Чтобы завершить регистрацию, заполните все поля в форме.'
+    errorMessage.value =
+      'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
+  } else {
+    errorMessage.value = '' // Сброс сообщения об ошибке, если форма валидна
   }
 
   return isValid
@@ -169,23 +189,11 @@ async function handleSubmit(event) {
       auth.setUserInfo(data) // Используем auth.setUserInfo
       router.push('/')
     } else {
-      error.value = 'Ошибка авторизации'
+      console.error('Ошибка авторизации') // Выводим сообщение об ошибке в консоль
     }
   } catch (err) {
-    error.value = err.message
-    console.error('Ошибка авторизации:', err)
+    errorMessage.value = 'Ошибка авторизации: ' + err.message
   }
-}
-
-// Добавляем watch с проверкой на существование
-if (userInfo) {
-  watch(
-    userInfo,
-    (newVal) => {
-      console.log('Пользователь изменился:', newVal)
-    },
-    { immediate: true },
-  )
 }
 </script>
 
@@ -350,19 +358,15 @@ a {
 .modal__form-group a {
   text-decoration: underline;
 }
+
 .error {
-  border: 0.7px solid red;
-  padding: 0;
-  margin: 0;
+  border: 1px solid red;
   border-radius: 8px;
 }
 
-.error-text {
+.error-message {
   color: red;
   margin-top: 5px;
-  text-align: center;
-  font-size: 12px;
-  margin-bottom: 7px;
 }
 
 .BaseInput {

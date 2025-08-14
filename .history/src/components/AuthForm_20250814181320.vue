@@ -352,7 +352,7 @@ a {
 }
 .error {
   border: 0.7px solid red;
-  padding: 0;
+ padding: 0; /* Удалите любые отступы */
   margin: 0;
   border-radius: 8px;
 }

@@ -352,8 +352,8 @@ a {
 }
 .error {
   border: 0.7px solid red;
-  padding: 0;
-  margin: 0;
+  width: 100%;
+  min-width: 100%;
   border-radius: 8px;
 }
 
