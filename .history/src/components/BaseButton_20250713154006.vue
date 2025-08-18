@@ -1,4 +1,0 @@
-<template>
-<button></button>
-
-</template>
