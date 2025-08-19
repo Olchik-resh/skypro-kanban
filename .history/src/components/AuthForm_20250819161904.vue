@@ -294,14 +294,18 @@ a {
 }
 .modal__form-login {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-content: center;
-  align-items: stretch;
-  gap: 7px;
+      display: flex
+;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: center;
+ 
+    align-items: stretch;
 }
-
+}
+.modal__form-login input:first-child {
+  margin-bottom: 7px;
+}
 .modal__input {
   width: 100%;
   min-width: 100%;
@@ -331,7 +335,7 @@ a {
   height: 30px;
   background-color: #565eef;
   border-radius: 4px;
-  margin-top: 13px;
+  margin-top: 20px;
   margin-bottom: 20px;
   border: none;
   outline: none;
@@ -375,8 +379,10 @@ a {
 
 .error-text {
   color: red;
+  margin-top: 5px;
   text-align: center;
   font-size: 12px;
+  margin-bottom: 7px;
 }
 
 .BaseInput {

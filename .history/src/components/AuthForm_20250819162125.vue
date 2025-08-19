@@ -375,8 +375,10 @@ a {
 
 .error-text {
   color: red;
+  margin-top: 5px;
   text-align: center;
   font-size: 12px;
+  margin-bottom: 7px;
 }
 
 .BaseInput {
