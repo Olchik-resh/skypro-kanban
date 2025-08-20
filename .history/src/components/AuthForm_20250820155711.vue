@@ -103,6 +103,84 @@ const errors = ref({
 
 const error = ref('')
 
+// function clearError(fieldName) {
+//   errors.value[fieldName] = false
+
+//   if (validateForm()) {
+//     error.value = ''
+//   }
+// }
+
+// function validateForm() {
+//   let isValid = true
+//   error.value = ''
+
+//   errors.value.name = false
+//   errors.value.login = false
+//   errors.value.password = false
+
+//   if (formData.value && !formData.value.name.trim() && props.isSignUp) {
+//     errors.value.name = true
+//     isValid = false
+//   }
+
+//   if (!formData.value.login.trim()) {
+//     errors.value.login = true
+//     isValid = false
+//   }
+
+//   if (!formData.value.password.trim()) {
+//     errors.value.password = true
+//     isValid = false
+//   }
+
+//   if (!isValid) {
+//     if (props.isSignUp) {
+//       error.value =
+//         'Введенные вами данные не корректны. Чтобы завершить регистрацию, заполните все поля в форме.'
+//     } else {
+//       error.value =
+//         'Введенные вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
+//     }
+
+//     isFormInvalid.value = true // Устанавливаем флаг недействительности формы
+//     return false
+//   } else {
+//     isFormInvalid.value = false
+//     return true
+//   }
+// }
+
+// async function handleSubmit(event) {
+//   event.preventDefault()
+//   console.log('Обработчик клика вызван')
+//   console.log('Проверка формы...')
+
+//   if (!validateForm()) {
+//     return
+//   }
+
+//   try {
+//     console.log('Попытка авторизации с данными:', formData.value)
+
+//     const data = props.isSignUp
+//       ? await signUp(formData.value)
+//       : await signIn({ login: formData.value.login, password: formData.value.password })
+
+//     console.log('Полученный ответ:', data)
+
+//     if (data) {
+//       auth.setUserInfo(data) // Используем auth.setUserInfo
+//       router.push('/')
+//     } else {
+//       error.value = 'Ошибка авторизации'
+//     }
+//   } catch (err) {
+//     error.value = err.message
+//     console.error('Ошибка авторизации:', err)
+//   }
+// }
+
 function validateName(name) {
   if (!name.trim()) {
     return false
@@ -151,56 +229,43 @@ async function handleSubmit(event) {
   const isLoginValid = validateLogin(formData.value.login)
   const isPasswordValid = validatePassword(formData.value.password)
 
-  let isValid = true
+    let isValid = true;
 
   if (!isNameValid || !isLoginValid || !isPasswordValid) {
-    
+    // Если хотя бы одно поле не прошло проверку, выводим соответствующие ошибки
     if (!isNameValid) {
       errors.value.name = true
-      isValid = false
+      isValid = false;
     }
     if (!isLoginValid) {
       errors.value.login = true
-      isValid = false
     }
     if (!isPasswordValid) {
       errors.value.password = true
-      isValid = false
     }
     return
   }
 
   try {
-    if (isValid) {
-      console.log('Попытка авторизации с данными:', formData.value)
+    console.log('Попытка авторизации с данными:', formData.value)
 
-      const data = props.isSignUp
-        ? await signUp(formData.value)
-        : await signIn({ login: formData.value.login, password: formData.value.password })
+    const data = props.isSignUp
+      ? await signUp(formData.value)
+      : await signIn({ login: formData.value.login, password: formData.value.password })
 
-      console.log('Полученный ответ:', data)
+    console.log('Полученный ответ:', data)
 
-      if (data) {
-        auth.setUserInfo(data) // Используем auth.setUserInfo
-        router.push('/')
-      } else {
-        error.value = 'Ошибка авторизации'
-      }
+    if (data) {
+      auth.setUserInfo(data) // Используем auth.setUserInfo
+      router.push('/')
     } else {
-      if (props.isSignUp) {
-        error.value =
-          'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-      } else {
-        error.value =
-          'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-      }
+      error.value = 'Ошибка авторизации'
     }
   } catch (err) {
     error.value = err.message
     console.error('Ошибка авторизации:', err)
   }
 }
-
 // Добавляем watch с проверкой на существование
 if (userInfo) {
   watch(

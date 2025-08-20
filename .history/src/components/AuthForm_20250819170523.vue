@@ -103,97 +103,81 @@ const errors = ref({
 
 const error = ref('')
 
-function validateName(name) {
-  if (!name.trim()) {
-    return false
-  }
-  return true
-}
-
-function validateLogin(login) {
-  if (!login.trim()) {
-    return false
-  }
-  return true
-}
-
-function validatePassword(password) {
-  // Проверка пароля
-  if (!password.trim()) {
-    return false
-  }
-  return true
-}
-
 function clearError(fieldName) {
   errors.value[fieldName] = false
 
-  if (fieldName === 'name') {
-    if (!validateName(formData.value.name)) {
-      errors.value.name = true
-    }
-  } else if (fieldName === 'login') {
-    if (!validateLogin(formData.value.login)) {
-      errors.value.login = true
-    }
-  } else if (fieldName === 'password') {
-    if (!validatePassword(formData.value.password)) {
-      errors.value.password = true
-    }
+  if (validateForm()) {
+    error.value = ''
   }
 }
+
+function validateForm() {
+  let isValid = true
+  error.value = ''
+
+  // Сброс ошибок
+  errors.value.name = false
+  errors.value.login = false
+  errors.value.password = false
+
+  console.log('isSignUp:', props.isSignUp)
+  console.log('formData:', formData.value)
+
+  // Проверка имени (только для регистрации)
+  if (formData.value && !formData.value.name.trim() && props.isSignUp) {
+    errors.value.name = true
+    isValid = false
+  }
+
+  // Проверка логина
+  if (!formData.value.login.trim()) {
+    errors.value.login = true
+    isValid = false
+  }
+
+  // Проверка пароля
+  if (!formData.value.password.trim()) {
+    errors.value.password = true
+    isValid = false
+  }
+
+  // Если есть ошибки, устанавливаем сообщение
+  if (!isValid) {
+    if (props.isSignUp) {
+      error.value =
+        'Введенные вами данные не корректны. Чтобы завершить регистрацию, заполните все поля в форме.'
+    } else {
+      error.value =
+        'Введенные вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
+    }
+  }
+  console.log('Валидация формы:', isValid)
+  return isValid
+}
+
 async function handleSubmit(event) {
   event.preventDefault()
   console.log('Обработчик клика вызван')
   console.log('Проверка формы...')
 
-  const isNameValid = validateName(formData.value.name)
-  const isLoginValid = validateLogin(formData.value.login)
-  const isPasswordValid = validatePassword(formData.value.password)
-
-  let isValid = true
-
-  if (!isNameValid || !isLoginValid || !isPasswordValid) {
-    
-    if (!isNameValid) {
-      errors.value.name = true
-      isValid = false
-    }
-    if (!isLoginValid) {
-      errors.value.login = true
-      isValid = false
-    }
-    if (!isPasswordValid) {
-      errors.value.password = true
-      isValid = false
-    }
+  if (!validateForm()) {
     return
   }
 
   try {
-    if (isValid) {
-      console.log('Попытка авторизации с данными:', formData.value)
+    console.log('Попытка авторизации с данными:', formData.value)
 
-      const data = props.isSignUp
-        ? await signUp(formData.value)
-        : await signIn({ login: formData.value.login, password: formData.value.password })
+    const data = props.isSignUp
+      ? await signUp(formData.value)
+      : await signIn({ login: formData.value.login, password: formData.value.password })
 
-      console.log('Полученный ответ:', data)
+    console.log('Полученный ответ:', data)
 
-      if (data) {
-        auth.setUserInfo(data) // Используем auth.setUserInfo
-        router.push('/')
-      } else {
-        error.value = 'Ошибка авторизации'
-      }
+    if (data) {
+      auth.setUserInfo(data) // Используем auth.setUserInfo
+      router.push('/')
     } else {
-      if (props.isSignUp) {
-        error.value =
-          'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-      } else {
-        error.value =
-          'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-      }
+      error.value = 'Ошибка авторизации'
     }
   } catch (err) {
     error.value = err.message
@@ -354,7 +338,7 @@ a {
   color: #ffffff;
 }
 .modal__btn-enter:disabled {
-  background-color: #94a6be;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 .modal__btn-enter a {

@@ -154,7 +154,7 @@ async function handleSubmit(event) {
   let isValid = true
 
   if (!isNameValid || !isLoginValid || !isPasswordValid) {
-    
+    // Если хотя бы одно поле не прошло проверку, выводим соответствующие ошибки
     if (!isNameValid) {
       errors.value.name = true
       isValid = false
