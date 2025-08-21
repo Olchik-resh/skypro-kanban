@@ -156,24 +156,12 @@ function clearError(fieldName) {
   errors.value[fieldName] = false
 }
 
-// Константы для сообщений об ошибках
-const SIGN_UP_ERROR_MESSAGE =
-  'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-const LOGIN_ERROR_MESSAGE =
-  'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-
 async function handleSubmit(event) {
   event.preventDefault()
   console.log('Обработчик клика вызван')
   console.log('Проверка формы...')
 
-  // Сброс общих и отдельных ошибок
   error.value = ''
-  errors.value = {
-    name: false,
-    login: false,
-    password: false,
-  }
 
   const isNameValid = validateName(formData.value.name)
   const isLoginValid = validateLogin(formData.value.login)
@@ -194,19 +182,20 @@ async function handleSubmit(event) {
       errors.value.password = true
       isValid = false
     }
+  } else {
+    // Сброс переменной error при успешной валидации
+    error.value = ''
   }
 
-  // Сброс переменной error при успешной валидации
-  if (isValid) {
-    error.value = ''
-  } else {
-    // Установка соответствующего сообщения об ошибке
+  if (!isValid) {
     if (props.isSignUp) {
-      error.value = SIGN_UP_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
     } else {
-      error.value = LOGIN_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
     }
-    return // Выход из функции при наличии ошибок валидации
+    return
   }
 
   try {
@@ -410,12 +399,7 @@ a {
 .modal__form-group a {
   text-decoration: underline;
 }
-// .error {
-//   border: 0.7px solid red;
-//   padding: 0;
-//   margin: 0;
-//   border-radius: 8px;
-// }
+xdf
 .error-message {
   margin-top: 5px;
   color: red;

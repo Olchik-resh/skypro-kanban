@@ -16,8 +16,10 @@
                 id="formname"
                 placeholder="Имя"
                 v-model="formData.name"
-                @focus="clearError('name')"
-                @input="formTouched = true"
+                @input="
+                  clearError('name')
+                  formTouched = true
+                "
                 autocomplete="name"
                 spellcheck="false"
               />
@@ -29,8 +31,10 @@
                 id="formlogin"
                 placeholder="Эл.почта"
                 v-model="formData.login"
-                @focus="clearError('login')"
-                @input="formTouched = true"
+                @input="
+                  {clearError('login')
+                  formTouched = true}
+                "
                 autocomplete="email"
                 spellcheck="false"
               />
@@ -42,8 +46,10 @@
                 id="formpassword"
                 placeholder="Пароль"
                 v-model="formData.password"
-                @focus="clearError('password')"
-                @input="formTouched = true"
+                @input="
+                  {clearError('password')
+                  formTouched = true}
+                "
                 autocomplete="current-password"
                 spellcheck="false"
               />
@@ -54,8 +60,8 @@
                 :fullWidth="true"
                 class="modal__btn-enter"
                 :class="{ error: isFormInvalid }"
-                :disabled="buttonDisabled"
-                @click="handleSubmitAndCheckForm"
+                :disabled="isFormInvalid"
+                @click="handleSubmit"
               >
                 {{ isSignUp ? 'Зарегистрироваться' : 'Войти' }}
               </BaseButton>
@@ -86,32 +92,20 @@ import { signIn, signUp } from '@/servises/auth'
 const auth = inject('auth') // Извлекаем весь объект auth
 const userInfo = auth?.user // Добавляем проверку на существование
 const router = useRouter()
-const buttonDisabled = ref(false)
+const formTouched = ref(false)
 
 const isFormInvalid = computed(() => {
+  if (!formTouched.value) {
+    return false // Форма считается действительной, пока пользователь не начал взаимодействовать с ней
+  }
+  if (!formData.value.login.trim() || !formData.value.password.trim()) {
+    return true // Если логин или пароль не введены, форма недействительна
+  }
   if (props.isSignUp && !formData.value.name.trim()) {
     return true // Если требуется имя и оно не введено, форма недействительна
   }
-  if (!formData.value.login.trim()) {
-    return true // Если логин не введен, форма недействительна
-  }
-  if (!formData.value.password.trim()) {
-    return true // Если пароль не введен, форма недействительна
-  }
-
   return false // Если все поля заполнены корректно, форма действительна
 })
-
-const handleSubmitAndCheckForm = (event) => {
-  if (isFormInvalid.value) {
-    buttonDisabled.value = true // Дизэйблим кнопку, если форма недействительна
-    // Здесь можно добавить дополнительную логику, например, показ сообщения об ошибке
-    return
-  }
-
-  // Если форма валидна, выполняем отправку формы
-  handleSubmit(event)
-}
 
 const props = defineProps({
   isSignUp: Boolean,
@@ -156,24 +150,12 @@ function clearError(fieldName) {
   errors.value[fieldName] = false
 }
 
-// Константы для сообщений об ошибках
-const SIGN_UP_ERROR_MESSAGE =
-  'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-const LOGIN_ERROR_MESSAGE =
-  'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-
 async function handleSubmit(event) {
   event.preventDefault()
   console.log('Обработчик клика вызван')
   console.log('Проверка формы...')
 
-  // Сброс общих и отдельных ошибок
   error.value = ''
-  errors.value = {
-    name: false,
-    login: false,
-    password: false,
-  }
 
   const isNameValid = validateName(formData.value.name)
   const isLoginValid = validateLogin(formData.value.login)
@@ -183,46 +165,53 @@ async function handleSubmit(event) {
 
   if (!isNameValid || !isLoginValid || !isPasswordValid) {
     if (!isNameValid) {
-      errors.value.name = true
+      errors.value.name = 'Имя должно быть не менее 3 символов'
       isValid = false
+    } else {
+      errors.value.name = ''
     }
+
     if (!isLoginValid) {
-      errors.value.login = true
+      errors.value.login = 'Логин должен быть не менее 5 символов'
       isValid = false
+    } else {
+      errors.value.login = ''
     }
+
     if (!isPasswordValid) {
-      errors.value.password = true
+      errors.value.password = 'Пароль должен быть не менее 8 символов'
       isValid = false
+    } else {
+      errors.value.password = ''
     }
+  } else {
+    // Сброс переменной error при успешной валидации
+    error.value = ''
   }
 
-  // Сброс переменной error при успешной валидации
-  if (isValid) {
-    error.value = ''
-  } else {
-    // Установка соответствующего сообщения об ошибке
+  if (!isValid) {
     if (props.isSignUp) {
-      error.value = SIGN_UP_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
     } else {
-      error.value = LOGIN_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
     }
-    return // Выход из функции при наличии ошибок валидации
+    return
   }
 
   try {
-    if (isValid) {
-      console.log('Попытка авторизации с данными:', formData.value)
+    console.log('Попытка авторизации с данными:', formData.value)
 
-      const data = props.isSignUp
-        ? await signUp(formData.value)
-        : await signIn({ login: formData.value.login, password: formData.value.password })
+    const data = props.isSignUp
+      ? await signUp(formData.value)
+      : await signIn({ login: formData.value.login, password: formData.value.password })
 
-      console.log('Полученный ответ:', data)
+    console.log('Полученный ответ:', data)
 
-      if (data) {
-        auth.setUserInfo(data) // Используем auth.setUserInfo
-        router.push('/')
-      }
+    if (data) {
+      auth.setUserInfo(data) // Используем auth.setUserInfo
+      router.push('/')
     }
   } catch (err) {
     error.value = err.message
@@ -410,12 +399,12 @@ a {
 .modal__form-group a {
   text-decoration: underline;
 }
-// .error {
-//   border: 0.7px solid red;
-//   padding: 0;
-//   margin: 0;
-//   border-radius: 8px;
-// }
+.error {
+  border: 0.7px solid red;
+  padding: 0;
+  margin: 0;
+  border-radius: 8px;
+}
 .error-message {
   margin-top: 5px;
   color: red;

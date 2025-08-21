@@ -156,12 +156,6 @@ function clearError(fieldName) {
   errors.value[fieldName] = false
 }
 
-// Константы для сообщений об ошибках
-const SIGN_UP_ERROR_MESSAGE =
-  'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-const LOGIN_ERROR_MESSAGE =
-  'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-
 async function handleSubmit(event) {
   event.preventDefault()
   console.log('Обработчик клика вызван')
@@ -196,17 +190,15 @@ async function handleSubmit(event) {
     }
   }
 
-  // Сброс переменной error при успешной валидации
-  if (isValid) {
-    error.value = ''
-  } else {
-    // Установка соответствующего сообщения об ошибке
+  if (!isValid) {
     if (props.isSignUp) {
-      error.value = SIGN_UP_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
     } else {
-      error.value = LOGIN_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
     }
-    return // Выход из функции при наличии ошибок валидации
+    return
   }
 
   try {

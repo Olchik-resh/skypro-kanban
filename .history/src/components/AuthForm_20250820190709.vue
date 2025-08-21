@@ -16,8 +16,7 @@
                 id="formname"
                 placeholder="Имя"
                 v-model="formData.name"
-                @focus="clearError('name')"
-                @input="formTouched = true"
+                @input="clearError('name')"
                 autocomplete="name"
                 spellcheck="false"
               />
@@ -29,8 +28,7 @@
                 id="formlogin"
                 placeholder="Эл.почта"
                 v-model="formData.login"
-                @focus="clearError('login')"
-                @input="formTouched = true"
+                @input="clearError('login')"
                 autocomplete="email"
                 spellcheck="false"
               />
@@ -42,8 +40,7 @@
                 id="formpassword"
                 placeholder="Пароль"
                 v-model="formData.password"
-                @focus="clearError('password')"
-                @input="formTouched = true"
+                @input="clearError('password')"
                 autocomplete="current-password"
                 spellcheck="false"
               />
@@ -52,10 +49,8 @@
               <BaseButton
                 type="secondary"
                 :fullWidth="true"
-                class="modal__btn-enter"
-                :class="{ error: isFormInvalid }"
-                :disabled="buttonDisabled"
-                @click="handleSubmitAndCheckForm"
+                :disabled="isFormInvalid"
+                @click="handleSubmit"
               >
                 {{ isSignUp ? 'Зарегистрироваться' : 'Войти' }}
               </BaseButton>
@@ -77,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, computed } from 'vue'
+import { ref, inject, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import BaseInput from './BaseInput.vue'
 import BaseButton from './BaseButton.vue'
@@ -86,32 +81,7 @@ import { signIn, signUp } from '@/servises/auth'
 const auth = inject('auth') // Извлекаем весь объект auth
 const userInfo = auth?.user // Добавляем проверку на существование
 const router = useRouter()
-const buttonDisabled = ref(false)
-
-const isFormInvalid = computed(() => {
-  if (props.isSignUp && !formData.value.name.trim()) {
-    return true // Если требуется имя и оно не введено, форма недействительна
-  }
-  if (!formData.value.login.trim()) {
-    return true // Если логин не введен, форма недействительна
-  }
-  if (!formData.value.password.trim()) {
-    return true // Если пароль не введен, форма недействительна
-  }
-
-  return false // Если все поля заполнены корректно, форма действительна
-})
-
-const handleSubmitAndCheckForm = (event) => {
-  if (isFormInvalid.value) {
-    buttonDisabled.value = true // Дизэйблим кнопку, если форма недействительна
-    // Здесь можно добавить дополнительную логику, например, показ сообщения об ошибке
-    return
-  }
-
-  // Если форма валидна, выполняем отправку формы
-  handleSubmit(event)
-}
+const isFormInvalid = ref(false)
 
 const props = defineProps({
   isSignUp: Boolean,
@@ -156,24 +126,10 @@ function clearError(fieldName) {
   errors.value[fieldName] = false
 }
 
-// Константы для сообщений об ошибках
-const SIGN_UP_ERROR_MESSAGE =
-  'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-const LOGIN_ERROR_MESSAGE =
-  'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-
 async function handleSubmit(event) {
   event.preventDefault()
   console.log('Обработчик клика вызван')
   console.log('Проверка формы...')
-
-  // Сброс общих и отдельных ошибок
-  error.value = ''
-  errors.value = {
-    name: false,
-    login: false,
-    password: false,
-  }
 
   const isNameValid = validateName(formData.value.name)
   const isLoginValid = validateLogin(formData.value.login)
@@ -194,19 +150,20 @@ async function handleSubmit(event) {
       errors.value.password = true
       isValid = false
     }
+  } else {
+    // Сброс переменной error при успешной валидации
+    error.value = ''
   }
 
-  // Сброс переменной error при успешной валидации
-  if (isValid) {
-    error.value = ''
-  } else {
-    // Установка соответствующего сообщения об ошибке
+  if (!isValid) {
     if (props.isSignUp) {
-      error.value = SIGN_UP_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
     } else {
-      error.value = LOGIN_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
     }
-    return // Выход из функции при наличии ошибок валидации
+    return
   }
 
   try {
@@ -385,9 +342,7 @@ a {
 .modal__btn-enter:disabled {
   background-color: #94a6be;
   cursor: not-allowed;
-  border: none;
 }
-
 .modal__btn-enter a {
   width: 100%;
   height: 100%;
@@ -410,17 +365,38 @@ a {
 .modal__form-group a {
   text-decoration: underline;
 }
-// .error {
-//   border: 0.7px solid red;
-//   padding: 0;
-//   margin: 0;
-//   border-radius: 8px;
-// }
-.error-message {
-  margin-top: 5px;
-  color: red;
-  font-size: 12px;
-  text-align: center;
+.error {
+  border: 0.7px solid red;
+  padding: 0;
+  margin: 0;
+  border-radius: 8px;
+}
+.error-me
+
+.BaseInput {
+  &::after {
+    content: attr(error-message);
+    display: block;
+    margin-top: 5px;
+    color: red;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &.error::after {
+    opacity: 1;
+  }
+  &.error {
+    border-color: red;
+    &:focus {
+      border-color: darkred;
+    }
+  }
+}
+
+.button-enter.error {
+  background: #94a6be; /* Цвет фона кнопки при ошибке */
 }
 
 @media screen and (max-width: 375px) {

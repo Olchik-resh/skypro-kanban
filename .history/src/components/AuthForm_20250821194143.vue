@@ -55,7 +55,7 @@
                 class="modal__btn-enter"
                 :class="{ error: isFormInvalid }"
                 :disabled="buttonDisabled"
-                @click="handleSubmitAndCheckForm"
+                @click="handleSubmit"
               >
                 {{ isSignUp ? 'Зарегистрироваться' : 'Войти' }}
               </BaseButton>
@@ -86,9 +86,12 @@ import { signIn, signUp } from '@/servises/auth'
 const auth = inject('auth') // Извлекаем весь объект auth
 const userInfo = auth?.user // Добавляем проверку на существование
 const router = useRouter()
-const buttonDisabled = ref(false)
+const formTouched = ref(false)
 
 const isFormInvalid = computed(() => {
+  if (!formTouched.value) {
+    return false // Форма не считается недействительной, пока пользователь не взаимодействовал с ней
+  }
   if (props.isSignUp && !formData.value.name.trim()) {
     return true // Если требуется имя и оно не введено, форма недействительна
   }
@@ -98,20 +101,8 @@ const isFormInvalid = computed(() => {
   if (!formData.value.password.trim()) {
     return true // Если пароль не введен, форма недействительна
   }
-
   return false // Если все поля заполнены корректно, форма действительна
 })
-
-const handleSubmitAndCheckForm = (event) => {
-  if (isFormInvalid.value) {
-    buttonDisabled.value = true // Дизэйблим кнопку, если форма недействительна
-    // Здесь можно добавить дополнительную логику, например, показ сообщения об ошибке
-    return
-  }
-
-  // Если форма валидна, выполняем отправку формы
-  handleSubmit(event)
-}
 
 const props = defineProps({
   isSignUp: Boolean,
@@ -156,24 +147,12 @@ function clearError(fieldName) {
   errors.value[fieldName] = false
 }
 
-// Константы для сообщений об ошибках
-const SIGN_UP_ERROR_MESSAGE =
-  'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
-const LOGIN_ERROR_MESSAGE =
-  'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
-
 async function handleSubmit(event) {
   event.preventDefault()
   console.log('Обработчик клика вызван')
   console.log('Проверка формы...')
 
-  // Сброс общих и отдельных ошибок
   error.value = ''
-  errors.value = {
-    name: false,
-    login: false,
-    password: false,
-  }
 
   const isNameValid = validateName(formData.value.name)
   const isLoginValid = validateLogin(formData.value.login)
@@ -194,19 +173,20 @@ async function handleSubmit(event) {
       errors.value.password = true
       isValid = false
     }
+  } else {
+    // Сброс переменной error при успешной валидации
+    error.value = ''
   }
 
-  // Сброс переменной error при успешной валидации
-  if (isValid) {
-    error.value = ''
-  } else {
-    // Установка соответствующего сообщения об ошибке
+  if (!isValid) {
     if (props.isSignUp) {
-      error.value = SIGN_UP_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные некорректны. Чтобы завершить регистрацию, заполните все поля в форме.'
     } else {
-      error.value = LOGIN_ERROR_MESSAGE
+      error.value =
+        'Введённые вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
     }
-    return // Выход из функции при наличии ошибок валидации
+    return
   }
 
   try {
@@ -410,12 +390,12 @@ a {
 .modal__form-group a {
   text-decoration: underline;
 }
-// .error {
-//   border: 0.7px solid red;
-//   padding: 0;
-//   margin: 0;
-//   border-radius: 8px;
-// }
+.error {
+  border: 0.7px solid red;
+  padding: 0;
+  margin: 0;
+  border-radius: 8px;
+}
 .error-message {
   margin-top: 5px;
   color: red;
