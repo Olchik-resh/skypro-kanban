@@ -166,7 +166,7 @@ const task = computed(() => {
 
   return foundTask
 })
-console.log(tasks.value)
+
 // Начало редактирования с проверкой данных
 const startEditing = () => {
   if (!task.value?._id) {
@@ -242,6 +242,7 @@ const saveChanges = async () => {
       task: taskData,
     })
 
+    // Обновление всего списка задач
     tasks.value = updatedTasks
 
     closeModal()

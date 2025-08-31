@@ -672,8 +672,8 @@ body {
   }
 }
 
-.btn-group {
-  display: flex;
+/btn-group {
+
 }
 @media only screen and (max-width: 375px) {
   .pop-exit__block {

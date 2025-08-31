@@ -166,7 +166,7 @@ const task = computed(() => {
 
   return foundTask
 })
-console.log(tasks.value)
+
 // Начало редактирования с проверкой данных
 const startEditing = () => {
   if (!task.value?._id) {
@@ -244,14 +244,14 @@ const saveChanges = async () => {
 
     tasks.value = updatedTasks
 
-    closeModal()
+     closeModal()
   } catch (error) {
     errorMessage.value = error.message
     if (error.message.includes('авторизации')) {
       router.push('/login')
     }
   }
-}
+}}
 
 // Закрытие модального окна
 const closeModal = () => {

@@ -166,7 +166,7 @@ const task = computed(() => {
 
   return foundTask
 })
-console.log(tasks.value)
+
 // Начало редактирования с проверкой данных
 const startEditing = () => {
   if (!task.value?._id) {
@@ -216,13 +216,8 @@ const saveChanges = async () => {
   try {
     if (!validateForm()) return
 
-    if (
-      !editedTask.value._id ||
-      typeof editedTask.value._id !== 'string' ||
-      editedTask.value._id.length !== 24
-    ) {
-      errorMessage.value =
-        'Некорректный идентификатор задачи. Обновите страницу или выберите задачу заново.'
+    if (!editedTask.value._id || typeof editedTask.value._id !== 'string' || editedTask.value._id.length !== 24) {
+      errorMessage.value = 'Некорректный идентификатор задачи. Обновите страницу или выберите задачу заново.'
       return
     }
 
@@ -232,7 +227,7 @@ const saveChanges = async () => {
       status: editedTask.value.status,
       topic: editedTask.value.topic,
       description: editedTask.value.description,
-      date: editedTask.value.date,
+      date: editedTask.value.date, // Будет преобразовано в ISO в editTask
     }
 
     // Отправка запроса через сервис
@@ -242,6 +237,7 @@ const saveChanges = async () => {
       task: taskData,
     })
 
+    // Обновление всего списка задач
     tasks.value = updatedTasks
 
     closeModal()

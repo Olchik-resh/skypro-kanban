@@ -199,24 +199,14 @@ async function handleSubmit() {
       token: token.value,
       task: requestData,
     })
-    console.log('Ответ сервера:', response)
 
-    if (response?.tasks && Array.isArray(response.tasks)) {
-      // Находим новую задачу в ответе — обычно это последняя
-      const newTask = response.tasks.find(
-        (t) => t.title === requestData.title && t.description === requestData.description,
-      )
-      if (newTask) {
-        const index = tasks.value.findIndex((t) => t._id === tempId)
-        if (index !== -1) {
-          tasks.value.splice(index, 1, {
-            ...newTask,
-            isOptimistic: undefined,
-          })
-        }
-      } else {
-        // Если не нашли — просто обновляем весь tasks.value с сервера
-        tasks.value = response.tasks
+    if (response?.data?._id) {
+      const index = tasks.value.findIndex((t) => t._id === tempId)
+      if (index !== -1) {
+        tasks.value.splice(index, 1, {
+          ...response.data,
+          isOptimistic: undefined,
+        })
       }
     }
 
