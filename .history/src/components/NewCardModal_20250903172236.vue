@@ -52,7 +52,7 @@
               class="categories__theme"
               :class="[
                 `_${category.color}`,
-                { '_active-category': selectedCategory === category.id },
+                { '_active-category': selectedCategory.value === category.id },
               ]"
               @click="selectCategory(category.id)"
             >
@@ -61,7 +61,7 @@
           </div>
         </div>
         <!-- Кнопка отправки -->
-        <div>selectedCategory: {{ selectedCategory }}</div>
+         <div>selectedCategory: {{ selectedCategory }}</div>
         <button
           type="submit"
           class="form-new__create _hover01"
@@ -139,6 +139,8 @@ const validateDescription = () => {
 
 const isFormValid = computed(() => {
   return (
+    !!formData.value &&
+    !!selectedCategory &&
     formData.value.title.trim().length >= 3 &&
     formData.value.description.trim().length > 0 &&
     selectedCategory.value !== null &&
