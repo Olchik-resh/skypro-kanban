@@ -55,7 +55,7 @@ export async function editTask({ token, id, task }) {
     const { data } = await axios.put(`${API_URL}/${id}`, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': '',
+        'Content-Type': '', 
       },
     })
 

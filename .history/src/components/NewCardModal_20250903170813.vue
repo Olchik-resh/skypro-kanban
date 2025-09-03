@@ -61,7 +61,6 @@
           </div>
         </div>
         <!-- Кнопка отправки -->
-         <div>selectedCategory: {{ selectedCategory }}</div>
         <button
           type="submit"
           class="form-new__create _hover01"

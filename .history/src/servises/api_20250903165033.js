@@ -55,7 +55,7 @@ export async function editTask({ token, id, task }) {
     const { data } = await axios.put(`${API_URL}/${id}`, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': '',
+        'Content-Type': '', 
       },
     })
 
@@ -66,7 +66,7 @@ export async function editTask({ token, id, task }) {
       error.response?.data?.error || error.response?.data?.message || 'Ошибка обновления задачи'
     throw new Error(message)
   }
-}
+}}
 
 export async function deleteTask({ token, id }) {
   try {
