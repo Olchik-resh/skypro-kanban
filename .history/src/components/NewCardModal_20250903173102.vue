@@ -220,8 +220,8 @@ async function handleSubmit() {
       }
     }
 
-    // formData.value = { title: '', description: '', dueDate: null }
-    // selectedCategory.value = null
+    formData.value = { title: '', description: '', dueDate: null }
+    selectedCategory.value = null
 
     closeModal()
   } catch (error) {
