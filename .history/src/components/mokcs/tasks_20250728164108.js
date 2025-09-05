@@ -1,0 +1,15 @@
+const tasks = [
+  { id: 1, topic: 'Web Design', title: 'Название задачи', date: '30.10.23', status: 'Без ' },
+  { id: 2, topic: 'Research', title: 'Название задачи', date: '30.10.23', status: '' },
+  { id: 3, topic: 'Copywriting', title: 'Название задачи', date: '30.10.23', status: '' },
+]
+
+// export const noStatusTask = tasks.filter(task => task.status === 'Без статуса');
+// export const doStatusTask = tasks.filter(task => task.status === 'Нужно сделать');
+// export const workStatusTask = tasks.filter(task => task.status === 'В работе');
+// export const testStatusTask = tasks.filter(task => task.status === 'Тестирование');
+// export const readyStatusTask = tasks.filter(task => task.status === 'Готово');
+
+export function getTasks() {
+  return tasks
+}
