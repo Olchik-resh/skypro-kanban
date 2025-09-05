@@ -1,126 +1,131 @@
 <template>
-  <div v-if="isModalOpen" class="pop-browse__container">
-    <div class="pop-browse__block">
-      <div class="pop-browse__content">
-        <!-- Заголовок и тема -->
-        <div class="pop-browse__top-block">
-          <h3 class="pop-browse__ttl">
-            <template v-if="isEditing">
+  <div>
+    <div v-if="isModalOpen" class="pop-browse__container">
+      <div class="pop-browse__block">
+        <div class="pop-browse__content">
+          <!-- Заголовок и тема -->
+          <div class="pop-browse__top-block">
+            <h3 class="pop-browse__ttl">
               <input
+                v-if="isEditing"
                 type="text"
                 v-model="editedTask.title"
                 class="edit-title"
                 @input="handleTitleChange($event.target.value)"
-                placeholder="Название задачи"
               />
-            </template>
-            <template v-else>
-              {{ task.title }}
-            </template>
-          </h3>
-          <div :class="topicClass">
-            <p>{{ task.topic }}</p>
+              <span v-else>{{ task.title }}</span>
+            </h3>
+            <div :class="topicClass">
+              <p>{{ task.topic }}</p>
+            </div>
           </div>
-        </div>
-        <!-- Ошибка заголовка -->
-        <div v-if="isEditing && titleError" class="error-message">{{ titleError }}</div>
+          <div v-if="titleError" class="error-message">{{ titleError }}</div>
 
-        <!-- Статус задачи: просмотр и редактирование -->
-        <div class="pop-browse__status status">
-          <p class="status__p subttl">Статус</p>
-          <div class="status__themes">
-            <template v-if="isEditing">
+          <!-- Статус задачи в просмотре -->
+          <div v-if="!isEditing" class="pop-browse__status status">
+            <p class="status__p subttl">Статус</p>
+            <div class="status__themes">
+              <div class="status__theme" :class="statusClass('Без статуса')">
+                <p :class="statusTextClass('Без статуса')">Без статуса</p>
+              </div>
+              <div class="status__theme" :class="statusClass('Нужно сделать')">
+                <p :class="statusTextClass('Нужно сделать')">Нужно сделать</p>
+              </div>
+              <div class="status__theme" :class="statusClass('В работе')">
+                <p :class="statusTextClass('В работе')">В работе</p>
+              </div>
+              <div class="status__theme" :class="statusClass('Тестирование')">
+                <p :class="statusTextClass('Тестирование')">Тестирование</p>
+              </div>
+              <div class="status__theme" :class="statusClass('Готово')">
+                <p :class="statusTextClass('Готово')">Готово</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Статус задачи в редактировании -->
+          <div v-if="isEditing" class="pop-browse__status status">
+            <p class="status__p subttl">Статус</p>
+            <div class="status__themes">
               <div
                 v-for="status in statusOptions"
                 :key="status"
                 class="status__theme"
                 :class="{
                   _blue: editedTask.status === status,
+                  _editable: isEditing,
                   _selected: editedTask.status === status,
                   'bg-94a6be': editedTask.status === status,
-                  _editable: isEditing,
                 }"
                 @click="handleStatusChange(status)"
               >
                 <p>{{ status }}</p>
               </div>
-            </template>
-            <template v-else>
-              <div
-                v-for="status in statusOptions"
-                :key="status"
-                class="status__theme"
-                :class="statusClass(status)"
-              >
-                <p :class="statusTextClass(status)">{{ status }}</p>
-              </div>
-            </template>
-          </div>
-        </div>
-        <!-- Ошибка статуса -->
-        <div v-if="isEditing && statusError" class="error-message">{{ statusError }}</div>
-
-        <!-- Описание задачи -->
-        <div class="pop-browse__wrap">
-          <form class="pop-browse__form form-browse">
-            <div class="form-browse__block">
-              <label class="subttl">Описание задачи</label>
-              <textarea
-                class="form-browse__area"
-                :readonly="!isEditing"
-                :value="isEditing ? editedTask.description : task.description"
-                @input="isEditing && (editedTask.description = $event.target.value)"
-                placeholder="Описание задачи..."
-              ></textarea>
             </div>
-          </form>
+          </div>
+          <div v-if="statusError" class="error-message">{{ statusError }}</div>
 
-          <!-- Календарь -->
-          <div>
-            <CalendarComponent
-              :raw-date="task.date"
-              :initial-date="isEditing ? null : task.date"
-              :readonly="!isEditing"
-              @date-selected="handleDateSelect"
-            />
-            <!-- Ошибка даты -->
-            <div v-if="isEditing && dateError" class="error-message">{{ dateError }}</div>
+          <!-- Описание задачи -->
+          <div class="pop-browse__wrap">
+            <form class="pop-browse__form form-browse">
+              <div class="form-browse__block">
+                <label class="subttl">Описание задачи</label>
+                <textarea
+                  class="form-browse__area"
+                  :readonly="!isEditing"
+                  :value="isEditing ? editedTask.description : task.description"
+                  @input="isEditing && (editedTask.description = $event.target.value)"
+                  placeholder="Описание задачи..."
+                ></textarea>
+              </div>
+            </form>
+
+            <!-- Даты -->
+            <div v-if="task">
+              <CalendarComponent
+                :raw-date="task.date"
+                :initial-date="isEditing ? null : task.date"
+                :readonly="!isEditing"
+                @update:model-value="handleDateSelect"
+              />
+              <div v-if="dateError" class="error-message">{{ dateError }}</div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- Панель управления -->
-      <div class="pop-browse__btn-edit">
-        <div class="btn-group">
-          <button v-if="!isEditing" class="btn-edit _btn-bor _hover03" @click="startEditing">
-            Редактировать задачу
-          </button>
-          <template v-else>
-            <button
-              class="btn-save _btn-bg _hover01"
-              @click="saveChanges"
-              :disabled="isFormInvalid"
-            >
-              {{ isSubmitting ? 'Сохранение...' : 'Сохранить' }}
+        <!-- Панель управления -->
+        <div class="pop-browse__btn-edit">
+          <div class="btn-group">
+            <button v-if="!isEditing" class="btn-edit _btn-bor _hover03" @click="startEditing">
+              Редактировать задачу
             </button>
-            <button class="btn-cancel _btn-bg _hover01" @click="cancelEditing">Отменить</button>
-          </template>
 
-          <!-- Общая ошибка (только если не связано с конкретным полем) -->
-          <div v-if="hasTriedSubmit && errorMessage" class="error-message">
-            <p>{{ errorMessage }}</p>
+            <div v-else class="edit-controls">
+              <button
+                class="btn-save _btn-bg _hover01"
+                @click="saveChanges"
+                :disabled="!!titleError || !!dateError || !!statusError || isSubmitting"
+              >
+                {{ isSubmitting ? 'Сохранение...' : 'Сохранить' }}
+              </button>
+              <button class="btn-cancel _btn-bg _hover01" @click="cancelEditing">Отменить</button>
+            </div>
+            <!-- Общая ошибка только после попытки сохранить -->
+            <div v-if="errorMessage" class="error-message">
+              <p>{{ errorMessage }}</p>
+            </div>
+            <button
+              class="btn-browse__delete _btn-bor _hover03"
+              @click="handleDelete"
+              :disabled="isDeleting"
+            >
+              {{ isDeleting ? 'Удаление...' : 'Удалить задачу' }}
+            </button>
           </div>
 
-          <button
-            class="btn-browse__delete _btn-bor _hover03"
-            @click="handleDelete"
-            :disabled="isDeleting"
-          >
-            {{ isDeleting ? 'Удаление...' : 'Удалить задачу' }}
+          <button class="btn-edit__close _btn-bg _hover01">
+            <RouterLink to="/">Закрыть</RouterLink>
           </button>
         </div>
-
-        <button class="btn-edit__close _btn-bg _hover01" @click="closeModal">Закрыть</button>
       </div>
     </div>
   </div>
@@ -201,17 +206,15 @@ const handleTitleChange = (title) => {
 
 const handleDateSelect = (date) => {
   editedTask.value.date = date
-
-  if (!date) {
-    dateError.value = 'Укажите дату'
-  } else if (dayjs(date).isBefore(dayjs().startOf('day'))) {
-    dateError.value = 'Дата не может быть в прошлом'
-  } else {
-    dateError.value = ''
-    console.log('Дата успешно выбрана:', dayjs(date).format('YYYY-MM-DD'))
+  if (hasTriedSubmit.value || isEditing.value) {
+    if (!date) {
+      dateError.value = 'Укажите дату'
+    } else if (dayjs(date).isBefore(dayjs().startOf('day'))) {
+      dateError.value = 'Дата не может быть в прошлом'
+    } else {
+      dateError.value = ''
+    }
   }
-
-  console.log('dateError:', dateError.value, 'date:', dayjs(date).format('YYYY-MM-DD'))
 }
 
 const handleStatusChange = (status) => {
@@ -223,7 +226,6 @@ const handleStatusChange = (status) => {
 
 // Валидация формы
 const validateForm = () => {
-  console.log('editedTask.value.date:', editedTask.value.date) // Вывод в консоль
   let valid = true
 
   if (!editedTask.value.title || editedTask.value.title.trim().length < 3) {
@@ -239,17 +241,11 @@ const validateForm = () => {
   } else {
     statusError.value = ''
   }
-  console.log('editedTask.value.date перед преобразованием:', editedTask.value.date)
-  const pickedDate = dayjs(editedTask.value.date).startOf('day')
-  console.log('pickedDate после преобразования:', pickedDate.format('YYYY-MM-DD'))
-  const today = dayjs().startOf('day')
-  console.log('pickedDate:', pickedDate.format('YYYY-MM-DD'))
-  console.log('today:', today.format('YYYY-MM-DD'))
 
   if (!editedTask.value.date) {
     dateError.value = 'Укажите дату'
     valid = false
-  } else if (pickedDate.isBefore(today)) {
+  } else if (dayjs(editedTask.value.date).isBefore(dayjs().startOf('day'))) {
     dateError.value = 'Дата не может быть в прошлом'
     valid = false
   } else {
@@ -259,17 +255,13 @@ const validateForm = () => {
   return valid
 }
 
-const isFormInvalid = computed(
-  () => !!titleError.value || !!dateError.value || !!statusError.value || isSubmitting.value,
-)
-
 // Сохранение изменений
 const saveChanges = async () => {
   hasTriedSubmit.value = true
   if (!validateForm()) {
+    errorMessage.value = 'Проверьте заполнение всех полей'
     return
   }
-  errorMessage.value = ''
   try {
     isSubmitting.value = true
     const taskData = {
@@ -279,13 +271,11 @@ const saveChanges = async () => {
       description: editedTask.value.description,
       date: dayjs(editedTask.value.date).toISOString(),
     }
-
     const updatedTasks = await editTask({
       token: userInfo.value.token,
       id: editedTask.value._id,
       task: taskData,
     })
-    console.log(taskData)
     tasks.value = updatedTasks
     closeModal()
   } catch (error) {

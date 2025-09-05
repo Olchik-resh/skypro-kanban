@@ -81,7 +81,7 @@
               :raw-date="task.date"
               :initial-date="isEditing ? null : task.date"
               :readonly="!isEditing"
-              @date-selected="handleDateSelect"
+              @update:model-value="handleDateSelect"
             />
             <!-- Ошибка даты -->
             <div v-if="isEditing && dateError" class="error-message">{{ dateError }}</div>
@@ -241,7 +241,6 @@ const validateForm = () => {
   }
   console.log('editedTask.value.date перед преобразованием:', editedTask.value.date)
   const pickedDate = dayjs(editedTask.value.date).startOf('day')
-  console.log('pickedDate после преобразования:', pickedDate.format('YYYY-MM-DD'))
   const today = dayjs().startOf('day')
   console.log('pickedDate:', pickedDate.format('YYYY-MM-DD'))
   console.log('today:', today.format('YYYY-MM-DD'))

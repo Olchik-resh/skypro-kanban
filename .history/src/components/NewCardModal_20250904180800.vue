@@ -152,14 +152,11 @@ const validateDate = () => {
 }
 
 const isFormValid = computed(() => {
-  const selected = formData.value.dueDate ? dayjs(formData.value.dueDate) : null
-  const now = dayjs().startOf('day')
   return (
     formData.value.title.trim().length >= 3 &&
     formData.value.description.trim().length > 0 &&
     selectedCategory.value !== null &&
-    selected &&
-    !selected.isBefore(now) // дата не раньше сегодняшней
+    formData.value.dueDate !== null
   )
 })
 

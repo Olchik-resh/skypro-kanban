@@ -38,7 +38,7 @@
                   _blue: editedTask.status === status,
                   _selected: editedTask.status === status,
                   'bg-94a6be': editedTask.status === status,
-                  _editable: isEditing,
+                  _editable: isEditing
                 }"
                 @click="handleStatusChange(status)"
               >
@@ -81,7 +81,7 @@
               :raw-date="task.date"
               :initial-date="isEditing ? null : task.date"
               :readonly="!isEditing"
-              @date-selected="handleDateSelect"
+              @update:model-value="handleDateSelect"
             />
             <!-- Ошибка даты -->
             <div v-if="isEditing && dateError" class="error-message">{{ dateError }}</div>
@@ -92,14 +92,18 @@
       <!-- Панель управления -->
       <div class="pop-browse__btn-edit">
         <div class="btn-group">
-          <button v-if="!isEditing" class="btn-edit _btn-bor _hover03" @click="startEditing">
+          <button
+            v-if="!isEditing"
+            class="btn-edit _btn-bor _hover03"
+            @click="startEditing"
+          >
             Редактировать задачу
           </button>
           <template v-else>
             <button
               class="btn-save _btn-bg _hover01"
               @click="saveChanges"
-              :disabled="isFormInvalid"
+              :disabled="!!titleError || !!dateError || !!statusError || isSubmitting"
             >
               {{ isSubmitting ? 'Сохранение...' : 'Сохранить' }}
             </button>
@@ -107,7 +111,7 @@
           </template>
 
           <!-- Общая ошибка (только если не связано с конкретным полем) -->
-          <div v-if="hasTriedSubmit && errorMessage" class="error-message">
+          <div v-if="errorMessage" class="error-message">
             <p>{{ errorMessage }}</p>
           </div>
 
@@ -120,7 +124,9 @@
           </button>
         </div>
 
-        <button class="btn-edit__close _btn-bg _hover01" @click="closeModal">Закрыть</button>
+        <button class="btn-edit__close _btn-bg _hover01" @click="closeModal">
+          Закрыть
+        </button>
       </div>
     </div>
   </div>
@@ -201,17 +207,15 @@ const handleTitleChange = (title) => {
 
 const handleDateSelect = (date) => {
   editedTask.value.date = date
-
-  if (!date) {
-    dateError.value = 'Укажите дату'
-  } else if (dayjs(date).isBefore(dayjs().startOf('day'))) {
-    dateError.value = 'Дата не может быть в прошлом'
-  } else {
-    dateError.value = ''
-    console.log('Дата успешно выбрана:', dayjs(date).format('YYYY-MM-DD'))
+  if (hasTriedSubmit.value || isEditing.value) {
+    if (!date) {
+      dateError.value = 'Укажите дату'
+    } else if (dayjs(date).isBefore(dayjs().startOf('day'))) {
+      dateError.value = 'Дата не может быть в прошлом'
+    } else {
+      dateError.value = ''
+    }
   }
-
-  console.log('dateError:', dateError.value, 'date:', dayjs(date).format('YYYY-MM-DD'))
 }
 
 const handleStatusChange = (status) => {
@@ -223,7 +227,6 @@ const handleStatusChange = (status) => {
 
 // Валидация формы
 const validateForm = () => {
-  console.log('editedTask.value.date:', editedTask.value.date) // Вывод в консоль
   let valid = true
 
   if (!editedTask.value.title || editedTask.value.title.trim().length < 3) {
@@ -239,17 +242,11 @@ const validateForm = () => {
   } else {
     statusError.value = ''
   }
-  console.log('editedTask.value.date перед преобразованием:', editedTask.value.date)
-  const pickedDate = dayjs(editedTask.value.date).startOf('day')
-  console.log('pickedDate после преобразования:', pickedDate.format('YYYY-MM-DD'))
-  const today = dayjs().startOf('day')
-  console.log('pickedDate:', pickedDate.format('YYYY-MM-DD'))
-  console.log('today:', today.format('YYYY-MM-DD'))
 
   if (!editedTask.value.date) {
     dateError.value = 'Укажите дату'
     valid = false
-  } else if (pickedDate.isBefore(today)) {
+  } else if (dayjs(editedTask.value.date).isBefore(dayjs().startOf('day'))) {
     dateError.value = 'Дата не может быть в прошлом'
     valid = false
   } else {
@@ -259,17 +256,13 @@ const validateForm = () => {
   return valid
 }
 
-const isFormInvalid = computed(
-  () => !!titleError.value || !!dateError.value || !!statusError.value || isSubmitting.value,
-)
-
 // Сохранение изменений
 const saveChanges = async () => {
   hasTriedSubmit.value = true
   if (!validateForm()) {
+    errorMessage.value = 'Проверьте заполнение всех полей'
     return
   }
-  errorMessage.value = ''
   try {
     isSubmitting.value = true
     const taskData = {
@@ -279,13 +272,11 @@ const saveChanges = async () => {
       description: editedTask.value.description,
       date: dayjs(editedTask.value.date).toISOString(),
     }
-
     const updatedTasks = await editTask({
       token: userInfo.value.token,
       id: editedTask.value._id,
       task: taskData,
     })
-    console.log(taskData)
     tasks.value = updatedTasks
     closeModal()
   } catch (error) {

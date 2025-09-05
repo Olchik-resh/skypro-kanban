@@ -81,7 +81,7 @@
               :raw-date="task.date"
               :initial-date="isEditing ? null : task.date"
               :readonly="!isEditing"
-              @date-selected="handleDateSelect"
+              @update:model-value="handleDateSelect"
             />
             <!-- Ошибка даты -->
             <div v-if="isEditing && dateError" class="error-message">{{ dateError }}</div>

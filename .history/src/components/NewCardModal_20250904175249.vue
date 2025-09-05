@@ -119,49 +119,7 @@ const categories = ref([
   { id: 3, name: 'Copywriting', color: 'purple' },
 ])
 
-const validateTitle = () => {
-  if (formData.value.title.length > 50) {
-    formData.value.title = formData.value.title.slice(0, 50)
-  }
-  titleError.value =
-    formData.value.title.trim().length < 3 ? 'Название должно быть не короче 3 символов' : ''
-}
 
-// Добавлена валидация описания
-const validateDescription = () => {
-  if (formData.value.description.length > 500) {
-    formData.value.description = formData.value.description.slice(0, 500)
-  }
-  descriptionError.value =
-    formData.value.description.trim().length === 0 ? 'Описание обязательно для заполнения' : ''
-}
-
-const validateDate = () => {
-  if (!formData.value.dueDate) {
-    dateError.value = 'Укажите срок выполнения задачи'
-  } else {
-    // Проверяем, что дата сегодня или позже
-    const selected = dayjs(formData.value.dueDate)
-    const now = dayjs().startOf('day')
-    if (selected.isBefore(now)) {
-      dateError.value = 'Дата не может быть в прошлом'
-    } else {
-      dateError.value = ''
-    }
-  }
-}
-
-const isFormValid = computed(() => {
-  const selected = formData.value.dueDate ? dayjs(formData.value.dueDate) : null
-  const now = dayjs().startOf('day')
-  return (
-    formData.value.title.trim().length >= 3 &&
-    formData.value.description.trim().length > 0 &&
-    selectedCategory.value !== null &&
-    selected &&
-    !selected.isBefore(now) // дата не раньше сегодняшней
-  )
-})
 
 const closeModal = () => {
   isModalOpen.value = false
@@ -178,7 +136,6 @@ async function handleSubmit() {
   // Валидация полей
   validateTitle()
   validateDescription()
-  validateDate()
 
   if (titleError.value || descriptionError.value || !formData.value.dueDate) {
     if (!formData.value.dueDate) dateError.value = 'Укажите срок выполнения задачи'

@@ -81,7 +81,7 @@
               :raw-date="task.date"
               :initial-date="isEditing ? null : task.date"
               :readonly="!isEditing"
-              @date-selected="handleDateSelect"
+              @update:model-value="handleDateSelect"
             />
             <!-- Ошибка даты -->
             <div v-if="isEditing && dateError" class="error-message">{{ dateError }}</div>
@@ -201,17 +201,14 @@ const handleTitleChange = (title) => {
 
 const handleDateSelect = (date) => {
   editedTask.value.date = date
-
   if (!date) {
     dateError.value = 'Укажите дату'
   } else if (dayjs(date).isBefore(dayjs().startOf('day'))) {
     dateError.value = 'Дата не может быть в прошлом'
   } else {
     dateError.value = ''
-    console.log('Дата успешно выбрана:', dayjs(date).format('YYYY-MM-DD'))
   }
-
-  console.log('dateError:', dateError.value, 'date:', dayjs(date).format('YYYY-MM-DD'))
+  console.log('dateError:', dateError.value, 'date:', date)
 }
 
 const handleStatusChange = (status) => {
@@ -223,7 +220,6 @@ const handleStatusChange = (status) => {
 
 // Валидация формы
 const validateForm = () => {
-  console.log('editedTask.value.date:', editedTask.value.date) // Вывод в консоль
   let valid = true
 
   if (!editedTask.value.title || editedTask.value.title.trim().length < 3) {
@@ -239,17 +235,11 @@ const validateForm = () => {
   } else {
     statusError.value = ''
   }
-  console.log('editedTask.value.date перед преобразованием:', editedTask.value.date)
-  const pickedDate = dayjs(editedTask.value.date).startOf('day')
-  console.log('pickedDate после преобразования:', pickedDate.format('YYYY-MM-DD'))
-  const today = dayjs().startOf('day')
-  console.log('pickedDate:', pickedDate.format('YYYY-MM-DD'))
-  console.log('today:', today.format('YYYY-MM-DD'))
 
   if (!editedTask.value.date) {
     dateError.value = 'Укажите дату'
     valid = false
-  } else if (pickedDate.isBefore(today)) {
+  } else if (dayjs(editedTask.value.date).isBefore(dayjs().startOf('day'))) {
     dateError.value = 'Дата не может быть в прошлом'
     valid = false
   } else {
@@ -267,6 +257,8 @@ const isFormInvalid = computed(
 const saveChanges = async () => {
   hasTriedSubmit.value = true
   if (!validateForm()) {
+    
+    errorMessage.value = 'Проверьте заполнение всех полей'
     return
   }
   errorMessage.value = ''
@@ -279,13 +271,11 @@ const saveChanges = async () => {
       description: editedTask.value.description,
       date: dayjs(editedTask.value.date).toISOString(),
     }
-
     const updatedTasks = await editTask({
       token: userInfo.value.token,
       id: editedTask.value._id,
       task: taskData,
     })
-    console.log(taskData)
     tasks.value = updatedTasks
     closeModal()
   } catch (error) {
